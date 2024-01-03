@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<body>
+
+    <h1>Q4. Starfish eat Crab Game</h1>
+
+    <img src="game-screenshot.png" />
+
+    <h3>Complete the code for the following tasks: </h3>
+    <ol>
+        <li>Add an event listener to handle arrow keys to move the startfish around in all directions(5 mark)</li>
+        <li>Complete the code for handling up, down, left and right arrows in the event handler function (15 marks)</li>
+        <li>In the <code>moveStarfish()</code> function complete the code if statement to detect if starfish is near the
+            crab, update the crab eaten count,
+            play the audio sound and write the three if conditions to level up (you can use your own numbers for next
+            level, crabs to eat count and speed) (35 marks)
+        </li>
+        <li>Complete the code in the <code>displayScoreArea()</code> function to display the current level and crabs
+            eaten score (5 marks)</li>
+        <li>Read the code carefully as you do not need to declare any new functions and variables.</li>
+    </ol>
+
+
+    <canvas id="canvas1" width="400" height="200" tabindex="0" style=" border:1px solid #000000;">
+    </canvas>
+
+    <script>
+        var canvas = document.getElementById("canvas1");
+        var ctx = canvas.getContext("2d");
+
+        var requestAnimationFrame = window.requestAnimationFrame;
+
+        var info = document.getElementById("info");
+        //images width and height
+        var width = 25; var height = 30;
+
+        //Starfish image object
+        var starfishImage = new Image();
+        starfishImage.src = "starfish.png";
+
+        //Crab image object
+        var crabImage = new Image();
+        crabImage.src = "crab.png";
+
+        //Crab start position
+        var crabImageX = canvas.width - 20; var crabImageY = 0;
+        //starfish is somewhere near the center left
+        var starfishImageX = 200; var starfishImageY = 100;
+
+        //number of crabs eaten
+        var crabsEaten = 0;
+
+        //time remaining
+        let timeRemaining = 60;
+
+        let level = 1;
+
+        //variable for level 1 objective
+        let crabsToBeEaten = 5;
+
+        let crabSpeed = 3000;
+
+        //font for score display
+        ctx.font = "10 px";
+
+        //audio file to play when starfish eats the crab
+        var eatingAudio = new Audio("eating.wav");
+
+        //add the event listener to handle arrow keys ......
+        window.addEventListener("keyup", handleStarfishMovements);
+
+
+        //a function to handle arrow key events to move the starfish around....
+        function handleStarfishMovements(event) {
+            var code = event.keyCode;
+
+            //handle UP arrow .........
+
+            if (code == '38') {
+                starfishImageY -= 5;
+                
+            }
+
+            //handle Down arrow .........
+
+             else if (code == '40') {
+                starfishImageY += 5;
+                
+
+            }
+           
+
+            //handle left arrow ..........
+
+            else if (code == '37') {
+                starfishImageX-=5;
+             
+
+
+            }
+            //handle right arrow .........
+             else if (code == '39') {
+                starfishImageX += 5;
+                
+            }
+
+               moveStarfish();
+           
+        }
+
+        function getDistance() {
+            //code for distance between spider and ant
+            var xDiff = (crabImageX - starfishImageX);
+            var yDiff = (crabImageY - starfishImageY);
+            return Math.sqrt((xDiff * xDiff) + (yDiff * yDiff));
+        }
+
+        function moveStarfish() {
+            //clear the canvas........
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
+            //check the if the starfish is near the crab by checking if distance is <= 30 . . . .
+            if (getDistance() < 30) {
+
+               
+                //update the crabs eaten count  ....
+                crabsEaten++
+                crabsToBeEaten--;
+
+                //update starfish position to center .....
+                starfishImageX = (canvas.width/2) - width
+                starfishImageY= canvas.height / 2 - height 
+
+                //play the eating audio ......
+
+                eatingAudio.play();
+
+                //complete the code for three levels ................
+
+                if(crabsToBeEaten===0){
+                    level++;
+                    crabsToBeEaten=10;
+                    crabSpeed=2000;
+                    crabsEaten=0;
+
+                }
+
+            }
+
+            //draw the score area text                   
+            displayScoreArea();
+
+            //draw the images using setTimeout()
+            setTimeout(() => {
+                ctx.drawImage(starfishImage, starfishImageX, starfishImageY, width, height);
+                ctx.drawImage(crabImage, crabImageX, crabImageY, width - 1, height - 1);
+            }, 1);
+        }
+
+        function moveCrab() {
+            setTimeout(function () {
+                requestAnimationFrame(moveCrab);
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                //make the crab appear at another position
+                crabImageX = (Math.random() * 370) + 1;
+                crabImageY = (Math.random() * 160) + 1;
+                ctx.drawImage(starfishImage, starfishImageX, starfishImageY, width, height);
+                ctx.drawImage(crabImage, crabImageX, crabImageY, width + 1, height + 1);
+
+                displayScoreArea();
+
+            }, crabSpeed);
+        }
+
+        function displayScoreArea() {
+            //draw the score area text .........
+            ctx.beginPath();
+            ctx.fillStyle = "black";
+            ctx.fillText("Level: " + level, 1, canvas.height-20);
+            ctx.fillText("Crabs Eaten: " + crabsEaten, 1, canvas.height-10);
+        }
+
+        moveStarfish();
+        moveCrab();
+    </script>
+
+
+</body>
+
+</html>
